@@ -1,0 +1,623 @@
+openapi: 3.0.0
+# Added by API Auto Mocking Plugin
+servers:
+# Added by API Auto Mocking Plugin
+# Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/milomory/Education/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://localhost:8080
+info:
+  description: Api Documentation
+  version: "1.0.0"
+  title: Api Documentation
+tags:
+  - name: Сервис MaterialProviderRegistry
+    description: Реестр Учебных материалов
+  - name: Сервис ReferenceRegistry
+    description: Реестр справочной информации
+  - name: Сервис MaterialComposiotion
+    description: Запрос подборок ЭЖД и директорий (папок) Библиотеки МЭШ
+paths:
+
+  /materials:
+    post:
+      tags:
+        - Сервис MaterialProviderRegistry
+      summary: При запросе материалов
+      operationId: getMaterialsByPartner
+      description: |
+        Запрос информации о материалах
+      parameters:
+        - in: query
+          name: filterParams
+          description: Объект с параметрами фильтрации
+          required: true
+          schema:
+            $ref: '#/components/schemas/FilterParams'
+        - in: query
+          name: uuid
+          description: Идентификатор подборки
+          required: false
+          schema:
+            type: integer 
+            format: int64
+        - name: offset
+          description: Смещение пагинации (постраничный?)
+          in: query
+          required: false
+          schema:
+            type: integer 
+            format: int64    
+        - in: query
+          name: group_id
+          description: Идентификатор группы
+          required: false
+          schema:
+            type: integer 
+        - in: query
+          name: lesson_id
+          description: Идентификатор урока
+          required: false
+          schema:
+            type: integer 
+        - in: query
+          name: page
+          description: Номер страницы
+          required: false
+          schema:
+            type: integer     
+        - in: query
+          name: perPage
+          description: Кол-во элементов на страницу
+          required: false
+          schema:
+            type: integer 
+        - name: sort.sorted
+          in: query
+          required: false
+          schema:  
+            type: boolean
+        - name: sort.unsorted
+          in: query
+          required: false
+          schema:  
+            type: boolean
+        - name: unpaged
+          in: query
+          required: false
+          schema:  
+            type: boolean
+      responses:
+        '200':
+          description: Запрос информации о материале по UUID
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Materials'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+
+
+  /materials/{uuid}:
+    get:
+      tags:
+        - Сервис MaterialProviderRegistry
+      summary: При запросе материала указываем идентификатор материала (uuid) 
+      operationId: findMaterialByUuidUsingGET
+      description: |
+        Запрос информации о материале по UUID
+      parameters:
+        - in: path
+          name: uuid
+          description: Идентификатор подборки
+          required: true
+          schema:
+            type: integer 
+            format: int64
+      responses:
+        '200':
+          description: Запрос информации о материале по UUID
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: '#/components/schemas/Material'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+
+
+  /materials/partner/:
+    get:
+      tags:
+        - Сервис MaterialProviderRegistry
+      summary: getPartners
+      operationId: getPartnersUsingGET
+      responses:
+        '200':
+          description: Партнер
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Partner'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+
+
+
+  /catalog/{catalog_name}:
+      get:
+        tags:
+          - Сервис ReferenceRegistry
+        summary: getTopic
+        operationId: getTopicUsingGET
+        parameters:
+          - name: catalog_name
+            description: Название каталога (subjects, class_levels, education_levels)
+            in: path
+            required: true
+            schema:
+              type: string
+        responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/CatalogTopic'
+          '401':
+            description: Unauthorized
+          '403':
+            description: Forbidden
+          '404':
+            description: Not Found
+
+  /didactic-units:
+    get:
+      tags:
+        - Сервис ReferenceRegistry
+      summary: getDidacticTopic
+      operationId: getDidacticTopicUsingGET
+      parameters:
+        - name: education_level_id
+          in: query
+          description: идентификатор уровня образования
+          required: true
+          schema:  
+            type: integer
+            format: int64
+        - name: subject_id
+          in: query
+          description: идентификатор предмета
+          required: true
+          schema:  
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/DidacticTopic'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+
+
+
+
+
+
+
+
+
+
+
+
+
+  /сompilations:
+    get:
+      tags:
+        - Сервис MaterialComposiotion
+      summary: Все подборки ЭЖД или по ИД
+      operationId: getCompilations
+      description: |
+        Все подюорки ЭЖД или по ИД
+      parameters:
+        - in: query
+          name: id
+          description: Идентификатор подборки
+          required: false
+          schema:
+            type: integer 
+        - in: query
+          name: group_id
+          description: Идентификатор группы
+          required: false
+          schema:
+            type: integer 
+        - in: query
+          name: lesson_id
+          description: Идентификатор урока
+          required: false
+          schema:
+            type: integer 
+        - in: query
+          name: page
+          description: Номер страницы
+          required: false
+          schema:
+            type: integer     
+        - in: query
+          name: perPage
+          description: Кол-во элементов на страницу
+          required: false
+          schema:
+            type: integer 
+      responses:
+        '200':
+          description: Список материалов подборки
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Compilation'
+        '400':
+          description: bad input parameter      
+  
+  /compilations/{id}:
+    get:
+      tags:
+        - Сервис MaterialComposiotion
+      summary: Все подборки ЭЖД или по ИД
+      operationId: getCompilationsbyId
+      description: |
+        Все подюорки ЭЖД или по ИД
+      parameters:
+        - in: path
+          name: id
+          description: Идентификатор подборки
+          required: true
+          schema:
+            type: integer 
+            format: int64
+      responses:
+        '200':
+          description: Список материалов подборки
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Compilation'
+        '400':
+          description: bad input parameter 
+  
+  /folders:
+    get:
+      tags:
+        - Сервис MaterialComposiotion
+      summary: Директории (папки) Библиотеки МЭШ
+      operationId: getFolders
+      description: |
+        Директории (папки) Библиотеки МЭШ
+      parameters:
+        - in: query
+          name: id
+          description: Идентификатор папки
+          required: false
+          schema:
+            type: string        
+      responses:
+        '200':
+          description: Список директорий верхнего уровня
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder'
+        '400':
+          description: bad input parameter
+          
+  /folders{id}:
+    get:
+      tags:
+        - Сервис MaterialComposiotion
+      summary: Директории (папки) Библиотеки МЭШ по ИД
+      operationId: getFoldersById
+      description: |
+        Директории (папки) Библиотеки МЭШ
+      parameters:
+        - in: path
+          name: id
+          description: Идентификатор папки
+          required: true
+          schema:
+            type: string        
+      responses:
+        '200':
+          description: Список директорий верхнего уровня
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Folder'
+        '400':
+          description: bad input parameter
+          
+components:
+  schemas:
+
+    CatalogEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+      title: CatalogEntry
+    CatalogTopic:
+      type: object
+      properties:
+        catalog_name:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogEntry'
+      title: CatalogTopic
+    DidacticTopic:
+      type: object
+      properties:
+        didactic_units:
+          type: array
+          items:
+            $ref: '#/components/schemas/DidacticUnit'
+        themes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Theme'
+      title: DidacticTopic
+    DidacticUnit:
+      type: object
+      properties:
+        children_count:
+          type: integer
+          format: int64
+          example: 99
+        cis_id: #какой еще CIS?
+          type: string
+        id:
+          type: integer
+          format: int64
+        parent_id:
+          type: integer
+          format: int64
+        theme_id:
+          type: integer
+          format: int64
+        title:
+          type: string
+      title: DidacticUnit
+    Theme:
+      type: object
+      properties:
+        didactic_unit_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+      title: Theme
+
+
+
+    
+    Partner:
+      type: object
+      properties:
+        description:
+          type: string
+        partner_icon_url:
+          type: string
+        partner_id:
+          type: integer
+          format: int64
+        partner_name:
+          type: string
+        redirect_url:
+          type: string
+      title: Partner
+    
+    FilterParams:
+      type: object
+      properties:
+        class_level_ids:
+          description: Массив параллелей
+          type: array
+          items:
+            type: integer
+            format: int64
+        subject_ids:
+          description: Массив предметов
+          type: array
+          items:
+            type: integer
+            format: int64
+        theme_frame_ids:
+          description: Массив дидактических единиц
+          type: array
+          items:
+            type: integer
+            format: int64
+        type:
+          type: string
+      title: FilterParams
+    
+    Folder:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: integer
+          format: int64
+        parent_folder_id:
+          type: integer
+          format: int64
+        chieldFolders:
+          type: array
+          items: 
+            $ref: '#/components/schemas/Folder'
+        is_system:
+          type: boolean
+        folder_type:
+          type: string
+        materials_count:
+          type: integer
+          format: int32
+    
+    Compilation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        materials:
+          type: array
+          items:
+            $ref: '#/components/schemas/Material'
+        pageable:
+          type: object
+          $ref: '#/components/schemas/Pageable'         
+    
+    Materials:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        materials:
+          type: array
+          items:
+            $ref: '#/components/schemas/Material'
+        empty:
+          type: boolean
+        first:
+          type: boolean
+        last:
+          type: boolean
+        number:
+          type: integer
+          format: int32
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          type: object
+          $ref: '#/components/schemas/Pageable'
+        size:
+          type: integer
+          format: int32
+        sort":
+          type: array
+          items:
+            $ref: "#/components/schemas/Sort"
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+      title: Materials
+    
+    Material:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        author:
+          type: string
+        description:
+          type: string
+        icon_url:
+          type: string
+        material_uuid:
+          type: string
+        type:
+          type: string
+        rating:
+          type: integer
+        subject_ids:
+          type: array
+          items:
+            type: integer
+            format: int64
+      title: Material
+    
+    Pageable:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        page: 
+          type: integer
+          format: int64
+        pageSize: 
+          type: integer
+          format: int64
+        paged":
+          type: boolean
+        sort":
+          type: array
+          items:
+            $ref: "#/components/schemas/Sort"
+        unpaged":
+          type: boolean
+    Sort:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+      title: Sort
+externalDocs:
+  url: https://wiki.edu.mos.ru/pages/viewpage.action?pageId=49796136
+  description: Confluence
