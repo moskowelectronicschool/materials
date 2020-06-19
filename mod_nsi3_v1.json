@@ -1,0 +1,227 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "<em></em> <a href=\"https://wiki.edu.mos.ru/pages/viewpage.action?pageId=56951361\">211 - MaterialProviderRegistry. Описание API</a>",
+    "version": "1.0",
+    "title": "API mod_nsi3",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "catalog-controller",
+      "description": "Запрос справочников НСИ3. (предметы, параллели, уровни образования)"
+    },
+    {
+      "name": "didactic-unit-controller",
+      "description": "Запрос структуры Тематического Каркаса НСИ3. (Темы и дидактические единицы)"
+    }
+  ],
+  "paths": {
+    "/catalog/{catalog_name}": {
+      "get": {
+        "tags": [
+          "catalog-controller"
+        ],
+        "summary": "getTopic",
+        "operationId": "getTopicUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "catalog_name",
+            "description": "Название каталога (subjects, class_levels, education_levels)",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/CatalogTopic"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/didactic-units": {
+      "get": {
+        "tags": [
+          "didactic-unit-controller"
+        ],
+        "summary": "getDidacticTopic",
+        "operationId": "getDidacticTopicUsingGET",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "education_level_id",
+            "in": "query",
+            "description": "идентификатор уровня образования",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          },
+          {
+            "name": "subject_id",
+            "in": "query",
+            "description": "идентификатор предмета",
+            "required": true,
+            "type": "integer",
+            "format": "int64"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/DidacticTopic"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "definitions": {
+    "CatalogEntry": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор записи"
+        },
+        "title": {
+          "type": "string",
+          "description": "Название, выводимое в UI"
+        }
+      },
+      "title": "CatalogEntry",
+      "description": "Запись каталога \"Тематический Каркас\" НСИ3, выводимая в элементы фильтра по материалам"
+    },
+    "CatalogTopic": {
+      "type": "object",
+      "properties": {
+        "catalog_name": {
+          "type": "string",
+          "description": "Наименование каталога",
+          "example": "subjects",
+          "enum": [
+            "YEAR",
+            "THEME",
+            "SUBJECTS",
+            "STUDY_LEVEL",
+            "EDUCATION_LEVEL",
+            "PARALLELS"
+          ]
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CatalogEntry"
+          }
+        }
+      },
+      "title": "CatalogTopic",
+      "description": "Объект ответа на получение списка элементов фильтра"
+    },
+    "DidacticTopic": {
+      "type": "object",
+      "properties": {
+        "didactic_units": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DidacticUnit"
+          }
+        },
+        "themes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Theme"
+          }
+        }
+      },
+      "title": "DidacticTopic",
+      "description": "Объект ответа на запрос структуры ТК (Темы и ДЕ)"
+    },
+    "DidacticUnit": {
+      "description": "Модель представления <a href=\"https://wiki.edu.mos.ru/pages/viewpage.action?pageId=37227944\">DIDACTIC_UNIT[347]</a> ТК НСИ3",
+      "type": "object",
+      "properties": {
+        "children_count": {
+          "type": "integer",
+          "format": "int64",
+          "example": 99
+        },
+        "cis_id": {
+          "type": "string",
+          "description": "Идентификатор КЭС"
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор ДЕ"
+        },
+        "parent_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор ДЕ-родителя"
+        },
+        "theme_id": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Идентификатор темы"
+        },
+        "title": {
+          "type": "string",
+          "description": "Название, выводимое в UI"
+        }
+      },
+      "title": "DidacticUnit"
+    },
+    "Theme": {
+      "description": "Модель представления <a href=\"https://wiki.edu.mos.ru/pages/viewpage.action?pageId=37227935\">THEME[343]</a> ТК НСИ3",
+      "type": "object",
+      "properties": {
+        "didactic_unit_ids": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        }
+      },
+      "title": "Theme"
+    }
+  }
+}
